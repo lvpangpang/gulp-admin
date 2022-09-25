@@ -1,0 +1,5 @@
+html {
+  color: red;
+  border-radius: 2px;
+  animation: alternate;
+}

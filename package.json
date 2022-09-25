@@ -1,0 +1,47 @@
+{
+  "name": "gulp-admin",
+  "version": "1.0.0",
+  "description": "基于gulp的简单页面打包工具",
+  "main": "index.js",
+  "bin": {
+    "gulp-admin": "./index.js"
+  },
+  "scripts": {
+    "start": "gulp start",
+    "build": "gulp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lvpangpang/gulp-admin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lvpangpang/gulp-admin/issues"
+  },
+  "homepage": "https://github.com/lvpangpang/gulp-admin#readme",
+  "dependencies": {
+    "@babel/runtime": "^7.19.0",
+    "@babel/core": "^7.7.2",
+    "@babel/plugin-transform-runtime": "^7.19.0",
+    "@babel/preset-env": "^7.7.1",
+    "del": "^5.1.0",
+    "gulp": "^4.0.2",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-less": "^4.0.1",
+    "gulp-postcss": "^8.0.0",
+    "postcss-px2rem": "^0.3.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-browserify": "^0.5.1",
+    "gulp-connect": "^5.7.0",
+    "gulp-if": "^3.0.0",
+    "gulp-imagemin": "^6.2.0",
+    "gulp-jshint": "^2.1.0",
+    "gulp-rev-all": "^2.0.2",
+    "gulp-rev-delete-original": "^0.2.3",
+    "gulp-uglify": "^3.0.2"
+  }
+}
