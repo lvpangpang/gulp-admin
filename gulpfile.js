@@ -1,3 +1,5 @@
+const path = require("path")
+const { resolve } = require('path')
 const gulp = require("gulp");
 const htmlmin = require("gulp-htmlmin");
 const minifyCss = require("gulp-clean-css");
@@ -15,6 +17,9 @@ const connect = require("gulp-connect");
 const revdel = require("gulp-rev-delete-original");
 const browserify = require("gulp-browserify");
 
+const resolvePath = (path) => resolve(process.cwd(), path)
+const dist = resolvePath('dist')
+
 const overrideBrowserslist = [
   "Android 4.1",
   "iOS 7.1",
@@ -27,7 +32,7 @@ const processors = [px2rem({ remUnit: 100 })];
 // 静态服务器
 gulp.task("server", (done) => {
   connect.server({
-    root: "dist", //根目录
+    root: dist, //根目录
     livereload: true, //自动更新
     port: 8888, //端口
   });
@@ -36,22 +41,22 @@ gulp.task("server", (done) => {
 
 // 清空dist目录
 gulp.task("clean", function () {
-  return del(["dist"]);
+  return del([dist]);
 });
 
 // 处理html
 gulp.task("html", function () {
   return gulp
-    .src("src/**/*.html")
+    .src(resolvePath("src/**/*.html"))
     .pipe(htmlmin({ collapseWhitespace: true }))
-    .pipe(gulp.dest("dist"))
+    .pipe(gulp.dest(dist))
     .pipe(connect.reload());
 });
 
 // 处理css
 gulp.task("css", (done) => {
   return gulp
-    .src("src/**/*.css")
+    .src(resolvePath("src/**/*.css"))
     .pipe(
       autoprefixer({
         overrideBrowserslist,
@@ -59,14 +64,14 @@ gulp.task("css", (done) => {
     )
     // .pipe(postcss(processors))
     .pipe(minifyCss())
-    .pipe(gulp.dest("dist"))
+    .pipe(gulp.dest(dist))
     .pipe(connect.reload());
 });
 
 // 处理less
 gulp.task("less", (done) => {
   gulp
-    .src("src/**/*.less")
+    .src(resolvePath("src/**/*.less"))
     .pipe(less())
     .pipe(
       autoprefixer({
@@ -75,7 +80,7 @@ gulp.task("less", (done) => {
     )
     // .pipe(postcss(processors))
     .pipe(minifyCss())
-    .pipe(gulp.dest("dist"))
+    .pipe(gulp.dest(dist))
     .pipe(connect.reload());
 
   done();
@@ -85,7 +90,7 @@ gulp.task("less", (done) => {
 gulp.task("js", function () {
   return (
     gulp
-      .src("src/**/*.js")
+      .src(resolvePath("src/**/*.js"))
       .pipe(
         babel({
           presets: ["@babel/env"],
@@ -93,7 +98,7 @@ gulp.task("js", function () {
         })
       )
       .pipe(browserify())
-      .pipe(gulp.dest("dist"))
+      .pipe(gulp.dest(dist))
       .pipe(connect.reload())
   );
 });
@@ -101,8 +106,8 @@ gulp.task("js", function () {
 // 处理图片
 gulp.task("images", function () {
   return gulp
-    .src("src/**/*.+(png|jpg|jpeg|gif|svg)")
-    .pipe(gulp.dest("dist"));
+    .src(resolvePath("src/**/*.+(png|jpg|jpeg|gif|svg)"))
+    .pipe(gulp.dest(dist));
 });
 
 // 判断图片资源
@@ -117,7 +122,7 @@ let isImage = function (file) {
 // 生产环境添加hash
 gulp.task("hash", (done) => {
   gulp
-    .src("dist/**")
+    .src(resolvePath("dist/**"))
     .pipe(gulpIf("*.js", uglify()))
     .pipe(gulpIf(isImage, imagemin()))
     .pipe(
@@ -134,28 +139,28 @@ gulp.task("hash", (done) => {
         },
       })
     )
-    .pipe(gulp.dest("dist"));
+    .pipe(gulp.dest(dist));
 
   done();
 });
 
 // 监听变化
 gulp.task("watcher", (done) => {
-  gulp.watch("src/**/*.html", gulp.series("html"));
-  gulp.watch("src/**/*.less", gulp.series("less"));
-  gulp.watch("src/**/*.js", gulp.series("js"));
-  gulp.watch("src/**/*", gulp.series("images"));
+  gulp.watch(resolvePath("src/**/*.html"), gulp.series("html"));
+  gulp.watch(resolvePath("src/**/*.less"), gulp.series("less"));
+  gulp.watch(resolvePath("src/**/*.js"), gulp.series("js"));
+  gulp.watch(resolvePath("src/**/*"), gulp.series("images"));
   done();
 });
 
-// 初始化
+// 公共
 gulp.task(
-  "init",
+  "common",
   gulp.series("clean", gulp.parallel("html", "css", "less", "js", "images"))
 );
 
 // 开发
-gulp.task("start", gulp.series("init", "server", "watcher"));
+gulp.task("start", gulp.series("common", "server", "watcher"));
 
 // 打包
-gulp.task("build", gulp.series("init", "hash"));
+gulp.task("build", gulp.series("common", "hash"));
