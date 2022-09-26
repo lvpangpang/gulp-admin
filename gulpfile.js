@@ -1,12 +1,9 @@
-const path = require("path")
 const { resolve } = require('path')
 const gulp = require("gulp");
 const htmlmin = require("gulp-htmlmin");
 const minifyCss = require("gulp-clean-css");
 const less = require("gulp-less");
 const autoprefixer = require("gulp-autoprefixer");
-const postcss = require("gulp-postcss");
-const px2rem = require("postcss-px2rem");
 const babel = require("gulp-babel");
 const uglify = require("gulp-uglify");
 const imagemin = require("gulp-imagemin");
@@ -27,7 +24,6 @@ const overrideBrowserslist = [
   "ff > 31",
   "ie >= 8",
 ];
-const processors = [px2rem({ remUnit: 100 })];
 
 // 静态服务器
 gulp.task("server", (done) => {
@@ -62,7 +58,6 @@ gulp.task("css", (done) => {
         overrideBrowserslist,
       })
     )
-    // .pipe(postcss(processors))
     .pipe(minifyCss())
     .pipe(gulp.dest(dist))
     .pipe(connect.reload());
@@ -78,7 +73,6 @@ gulp.task("less", (done) => {
         overrideBrowserslist,
       })
     )
-    // .pipe(postcss(processors))
     .pipe(minifyCss())
     .pipe(gulp.dest(dist))
     .pipe(connect.reload());
