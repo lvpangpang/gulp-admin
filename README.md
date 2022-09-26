@@ -34,7 +34,6 @@ yarn add gulp-admin -D
 ## 1.2 全局安装使用
 
 全局安装模式目前暂不可用，这种模式也是我写这个包的初衷，但是目前遇到 gulp-babel 全局使用报错，正在想办法解决中。。。
-执行
 
 ```
 npm install gulp-admin -g
