@@ -20,7 +20,7 @@ process.argv.push(
 // 增加--gulpfile参数
 process.argv.push(
   "--gulpfile",
-  path.resolve(__dirname, "./gulpfile.js")
+  path.resolve(__dirname, "../gulpfile.js")
 );
 
 require("gulp/bin/gulp");
