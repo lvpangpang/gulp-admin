@@ -80,7 +80,7 @@ gulp.task("less", (done) => {
   done();
 });
 
-// 处理js
+// 处理js+垫片
 gulp.task("js", function () {
   return (
     gulp
