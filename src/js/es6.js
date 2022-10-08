@@ -80,3 +80,5 @@
 	}
 	testSync();//async await test...
 }())
+
+console.log('吕肥肥12322222')

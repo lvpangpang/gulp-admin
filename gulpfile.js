@@ -14,6 +14,8 @@ const connect = require("gulp-connect");
 const revdel = require("gulp-rev-delete-original");
 const browserify = require("gulp-browserify");
 
+const watchFiles = require("./watchFile");
+
 const resolvePath = (path) => resolve(process.cwd(), path);
 const dist = resolvePath("dist");
 
@@ -26,12 +28,13 @@ const overrideBrowserslist = [
 ];
 
 // 静态服务器
-gulp.task("server", () => {
-  return connect.server({
+gulp.task("server", (done) => {
+  connect.server({
     root: dist, //根目录
     livereload: true, //自动更新
     port: 8888, //端口
   });
+  done();
 });
 
 // 清空dist目录
@@ -96,7 +99,8 @@ gulp.task("js", function () {
 gulp.task("images", function () {
   return gulp
     .src(resolvePath("src/**/*.+(png|jpg|jpeg|gif|svg)"))
-    .pipe(gulp.dest(dist));
+    .pipe(gulp.dest(dist))
+    .pipe(connect.reload());
 });
 
 // 判断图片资源
@@ -131,24 +135,28 @@ gulp.task("hash", () => {
     .pipe(gulp.dest(dist));
 });
 
-// 监听变化
-gulp.task("watcher", (done) => {
-  gulp.watch(resolvePath("src/**/*.html"), gulp.series("html"));
-  gulp.watch(resolvePath("src/**/*.css"), gulp.series("css"));
-  gulp.watch(resolvePath("src/**/*.less"), gulp.series("less"));
-  gulp.watch(resolvePath("src/**/*.js"), gulp.series("js"));
-  gulp.watch(resolvePath("src/**/*.+(png|jpg|jpeg|gif|svg)"), gulp.series("images"));
-  done()
+// 监听变化-这里不用gulp.watch是因为兼容性很差，改用chokidar来监听文件变化
+gulp.task("watch", (done) => {
+  watchFiles(resolvePath("src/**/*.html"), gulp.series("html"));
+  watchFiles(resolvePath("src/**/*.css"), gulp.series("css"));
+  watchFiles(resolvePath("src/**/*.less"), gulp.series("less"));
+  watchFiles(resolvePath("src/**/*.js"), gulp.series("js"));
+  watchFiles(
+    resolvePath("src/**/*.+(png|jpg|jpeg|gif|svg)"),
+    gulp.series("images")
+  );
+  done();
 });
 
-// 公共
-gulp.task(
-  "common",
-  gulp.series("clean", gulp.parallel("html", "css", "less", "js", "images"))
-);
-
 // 开发
-gulp.task("start", gulp.series("common", "server", "watcher"));
+gulp.task("start", gulp.series("server", "watch"));
 
 // 打包
-gulp.task("build", gulp.series("common", "hash"));
+gulp.task(
+  "build",
+  gulp.series(
+    "clean",
+    gulp.parallel("html", "css", "less", "js", "images"),
+    "hash"
+  )
+);
